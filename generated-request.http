@@ -1,0 +1,12 @@
+### GET request to example server
+GET https://localhost:3000/get
+    ?generated-in=WebStorm
+
+### login
+POST https://localhost:3000/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
