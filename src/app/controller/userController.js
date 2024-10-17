@@ -10,8 +10,38 @@ const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
+const generateOTP = () => {
+    return Math.floor(100000 + Math.random() * 900000);
+};
+
+const sendOTP = async (email, otp, res) => {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "OTP",
+      text: `Your OTP is ${otp}`,
+    };
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Email sent: " + info.response);
+        res.status(200).json({ message: "OTP sent!" });
+    } catch (error) {
+        console.error("Error sending email: ", error);
+        res.status(500).json({ error: error.message });
+    }
+    return otp;
+}
+
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
   if (!email || !password) {
     res
       .status(400)
@@ -20,11 +50,17 @@ const register = async (req, res) => {
   }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
+  const otp = generateOTP();
+  const otpExpiry = Date.now() + 3600000; // 1hour
   const user = {
     userId: uuidv4(),
     email,
+    name,
     password: hashedPassword,
+    otp,
+    otpExpiry,
   };
+
   try {
     await createTable(userSchema);
     const userAlreadyExists = await checkRecordExist("users", "email", email);
@@ -32,12 +68,37 @@ const register = async (req, res) => {
       res.status(409).json({ error: "Email already exists" });
     } else {
       await insertRecord("users", user);
-      res.status(201).json({ message: "User created successfully!" });
+      await sendOTP(email, otp);
+      res.status(201).json({ message: "User created successfully!, OTP send to your email." });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+const verifyOTP = async (res, req) => {
+  const {email, otp} = req.body;
+  if (!email || !otp) {
+    res.status(400).json({error: "Email and OTP fields cannot be empty!"});
+  }
+  try {
+    const user = await checkRecordExist('users', 'email', email);
+    if (!user) {
+      res.status(404).json({error: 'User not found!'});
+      return;
+    }
+
+    if (user.otp !== otp || user.otpExpiry < Date.now()) {
+      res.status(401).json({error: 'Invalid or expired OTP!'});
+      return;
+    }
+
+    await updateRecord('users', {otp: null, otpExpiry: null}, 'email', email);
+    res.status(200).json({message: 'OTP verified successfully!'});
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -149,10 +210,12 @@ const changePassword = async (req, res) => {
       res.status(500).json({error: error.message});
     }
 };
+
 //exports the controller functions
 module.exports = {
   register,
   login,
   forgotPassword,
-  changePassword
+  changePassword,
+  verifyOTP,
 };
