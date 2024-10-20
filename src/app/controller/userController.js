@@ -32,10 +32,10 @@ const sendOTP = async (email, otp, res) => {
     try {
       const info = await transporter.sendMail(mailOptions);
       console.log("Email sent: " + info.response);
-  } catch (error) {
+    } catch (error) {
       console.error("Error sending email: ", error);
       res.status(500).json({ error: error.message });
-  }
+    }
   return otp;
 };
 
@@ -75,7 +75,7 @@ const register = async (req, res) => {
   }
 };
 
-const verifyOTP = async (res, req) => {
+const verifyOTP = async (req, res) => {
   const {email, otp} = req.body;
   if (!email || !otp) {
     res.status(400).json({error: "Email and OTP fields cannot be empty!"});
@@ -141,7 +141,7 @@ const login = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
   const {email} = req.body;
-  if(!email){
+  if(!email) {
     res.status(400).json({error: "Email field cannot be empty!"});
     return;
   }
@@ -166,13 +166,13 @@ const forgotPassword = async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
+      from: '"ADMIN" <ilovevietnam272@gmail.com>',
+      to: `${email}`,
       subject: "Password Reset",
       text: `Click on the link to reset your password: http://localhost:3000/reset-password?token=${resetToken}`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error,   info) => {
       if (error) {
         res.status(500).json({error: error.message});
       } else {
@@ -183,30 +183,39 @@ const forgotPassword = async (req, res) => {
     res.status(500).json({error: error.message});
   }
 }
+
 const changePassword = async (req, res) => {
-    const {email, latestPassword, newPassword} = req.body;
-    if(!email || !latestPassword || !newPassword){
-      res.status(400).json({error: "Email, Current Password or New Password fields cannot be empty!"});
+    const {email, latestPassword, newPassword, resetToken, resetTokenExpiry} = req.body;
+    if(!email  || !newPassword || (!latestPassword && !resetToken)){
+      res.status(400).json({error: "Email, New Password, and either Current Password or Reset Token fields cannot be empty!!"});
       return;
     }
-    try{
+
+    try {
       const user = await checkRecordExist("users", "email", email);
       if(!user){
         res.status(404).json({error: "User not found!"});
         return;
       }
-      const passwordMatch = await bcrypt.compare(latestPassword, user.password);
-      if(!passwordMatch){
-            res.status(401).json({error: "Invalid credentials!"});
-            return;
+      if (resetToken){
+        if(user.resetToken !== resetToken || user.resetTokenExpiry < Date.now()){
+          res.status(401).json({error: "Invalid or expired reset token!"});
+          return;
+        }
+      } else {
+        const passwordMatch = await bcrypt.compare(latestPassword, user.password);
+        if (!passwordMatch) {
+          res.status(401).json({error: "Invalid credentials!"});
+          return;
+        }
       }
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-      await updateRecord("users", {password: hashedPassword}, "email", email);
+      await updateRecord("users", {password: hashedPassword, resetToken: null, resetTokenExpiry: null}, "email", email);
       res.status(200).json({message: "Password updated successfully!"});
-    } catch(error){
-      res.status(500).json({error: error.message});
+    } catch (error) {
+      res.status(500).json({ error: error.message});
     }
 };
 
