@@ -23,26 +23,25 @@ const sendOTP = async (email, otp, res) => {
       },
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
+    const mailOptions =  {
+      from:'"ADMIN" <ilovevietnam272@gmail.com>',
+      to: `${email}`,
       subject: "OTP",
       text: `Your OTP is ${otp}`,
     };
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: " + info.response);
-        res.status(200).json({ message: "OTP sent!" });
-    } catch (error) {
-        console.error("Error sending email: ", error);
-        res.status(500).json({ error: error.message });
-    }
-    return otp;
-}
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: " + info.response);
+  } catch (error) {
+      console.error("Error sending email: ", error);
+      res.status(500).json({ error: error.message });
+  }
+  return otp;
+};
 
 const register = async (req, res) => {
   const { email, password, name } = req.body;
-  if (!email || !password) {
+  if (!email || !password || !name) {
     res
       .status(400)
       .json({ error: "Email or Password fields cannot be empty!" });
@@ -55,8 +54,8 @@ const register = async (req, res) => {
   const user = {
     userId: uuidv4(),
     email,
-    name,
     password: hashedPassword,
+    name,
     otp,
     otpExpiry,
   };
@@ -68,7 +67,7 @@ const register = async (req, res) => {
       res.status(409).json({ error: "Email already exists" });
     } else {
       await insertRecord("users", user);
-      await sendOTP(email, otp);
+      await sendOTP(email, otp, res);
       res.status(201).json({ message: "User created successfully!, OTP send to your email." });
     }
   } catch (error) {
