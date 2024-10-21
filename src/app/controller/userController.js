@@ -169,10 +169,17 @@ const forgotPassword = async (req, res) => {
       from: '"ADMIN" <ilovevietnam272@gmail.com>',
       to: `${email}`,
       subject: "Password Reset",
-      text: `Click on the link to reset your password: http://localhost:3000/reset-password?token=${resetToken}`,
+      html: `
+        <h2>Password Reset</h2>
+        <p>Click on the button below to reset your password:</p>
+        <a href="http://localhost:3000/reset-password?token=${resetToken}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Reset Password</a>
+        <p>It is your code to change a password:</p>
+        <p style="font-weight: bold; font-size: 18px;">${resetToken}</p>
+        <p>If you did not request a password reset, please ignore this email.</p>
+      `,
     };
 
-    transporter.sendMail(mailOptions, (error,   info) => {
+    transporter.sendMail(mailOptions, (error) => {
       if (error) {
         res.status(500).json({error: error.message});
       } else {
@@ -185,8 +192,8 @@ const forgotPassword = async (req, res) => {
 }
 
 const changePassword = async (req, res) => {
-    const {email, latestPassword, newPassword, resetToken, resetTokenExpiry} = req.body;
-    if(!email  || !newPassword || (!latestPassword && !resetToken)){
+    const {email, password, newPassword, resetToken, resetTokenExpiry} = req.body;
+    if(!email  || !newPassword || (!password && !resetToken)){
       res.status(400).json({error: "Email, New Password, and either Current Password or Reset Token fields cannot be empty!!"});
       return;
     }
@@ -203,7 +210,7 @@ const changePassword = async (req, res) => {
           return;
         }
       } else {
-        const passwordMatch = await bcrypt.compare(latestPassword, user.password);
+        const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
           res.status(401).json({error: "Invalid credentials!"});
           return;
