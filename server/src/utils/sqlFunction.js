@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const config = require('server/src/config/config');
+const config = require('../config/config');
 const pool = mysql.createPool(config);
 
 function createTable(schema){

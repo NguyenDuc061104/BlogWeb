@@ -3,39 +3,40 @@ const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const userSchema = require('server/src/schemas/userSchema');
-const {createTable, checkRecordExist, insertRecord, updateRecord} = require('server/src/utils/sqlFunction');
+const userSchema = require('../../schemas/userSchema');
+const {createTable, checkRecordExist, insertRecord, updateRecord} = require('../../utils/sqlFunction');
 
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000);
+  return Math.floor(100000 + Math.random() * 900000);
 };
 
 const sendOTP = async (email, otp, res) => {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
 
-    const mailOptions =  {
-      from:'"ADMIN" <ilovevietnam272@gmail.com>',
-      to: `${email}`,
-      subject: "OTP",
-      text: `Your OTP is ${otp}`,
-    };
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent: " + info.response);
-    } catch (error) {
-      console.error("Error sending email: ", error);
-      res.status(500).json({ error: error.message });
-    }
+  const mailOptions =  {
+    from:'"ADMIN" <ilovevietnam272@gmail.com>',
+    to: `${email}`,
+    subject: "OTP",
+    text: `Your OTP is ${otp}`,
+  };
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+  } catch (error) {
+    console.error("Error sending email: ", error);
+    res.status(500).json({ error: error.message });
+    return; // Add return statement
+  }
   return otp;
 };
 
@@ -43,8 +44,8 @@ const register = async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password || !name) {
     res
-      .status(400)
-      .json({ error: "Email or Password fields cannot be empty!" });
+        .status(400)
+        .json({ error: "Email or Password fields cannot be empty!" });
     return;
   }
   const salt = await bcrypt.genSalt(10);
@@ -79,17 +80,18 @@ const verifyOTP = async (req, res) => {
   const {email, otp} = req.body;
   if (!email || !otp) {
     res.status(400).json({error: "Email and OTP fields cannot be empty!"});
+    return; // Add return statement
   }
   try {
     const user = await checkRecordExist('users', 'email', email);
     if (!user) {
       res.status(404).json({error: 'User not found!'});
-      return;
+      return; // Add return statement
     }
 
     if (user.otp !== otp || user.otpExpiry < Date.now()) {
       res.status(401).json({error: 'Invalid or expired OTP!'});
-      return;
+      return; // Add return statement
     }
 
     await updateRecord('users', {otp: null, otpExpiry: null}, 'email', email);
@@ -103,8 +105,8 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res
-      .status(400)
-      .json({ error: "Email or Password fields cannot be empty!" });
+        .status(400)
+        .json({ error: "Email or Password fields cannot be empty!" });
     return;
   }
 
@@ -118,8 +120,8 @@ const login = async (req, res) => {
       }
 
       const passwordMatch = await bcrypt.compare(
-        password,
-        existingUser.password
+          password,
+          existingUser.password
       );
 
       if (passwordMatch) {
@@ -179,51 +181,50 @@ const forgotPassword = async (req, res) => {
       `,
     };
 
-    transporter.sendMail(mailOptions, (error) => {
-      if (error) {
-        res.status(500).json({error: error.message});
-      } else {
-        res.status(200).json({message: "Email sent!"});
-      }
-    });
+    try {
+      await transporter.sendMail(mailOptions);
+      res.status(200).json({message: "Email sent!"});
+    } catch (error) {
+      res.status(500).json({error: error.message});
+    }
   } catch(error) {
     res.status(500).json({error: error.message});
   }
 }
 
 const changePassword = async (req, res) => {
-    const {email, password, newPassword, resetToken, resetTokenExpiry} = req.body;
-    if(!email  || !newPassword || (!password && !resetToken)){
-      res.status(400).json({error: "Email, New Password, and either Current Password or Reset Token fields cannot be empty!!"});
+  const {email, password, newPassword, resetToken, resetTokenExpiry} = req.body;
+  if(!email  || !newPassword || (!password && !resetToken)){
+    res.status(400).json({error: "Email, New Password, and either Current Password or Reset Token fields cannot be empty!!"});
+    return;
+  }
+
+  try {
+    const user = await checkRecordExist("users", "email", email);
+    if(!user){
+      res.status(404).json({error: "User not found!"});
       return;
     }
-
-    try {
-      const user = await checkRecordExist("users", "email", email);
-      if(!user){
-        res.status(404).json({error: "User not found!"});
+    if (resetToken){
+      if(user.resetToken !== resetToken || user.resetTokenExpiry < Date.now()){
+        res.status(401).json({error: "Invalid or expired reset token!"});
         return;
       }
-      if (resetToken){
-        if(user.resetToken !== resetToken || user.resetTokenExpiry < Date.now()){
-          res.status(401).json({error: "Invalid or expired reset token!"});
-          return;
-        }
-      } else {
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-          res.status(401).json({error: "Invalid credentials!"});
-          return;
-        }
+    } else {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        res.status(401).json({error: "Invalid credentials!"});
+        return;
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-      await updateRecord("users", {password: hashedPassword, resetToken: null, resetTokenExpiry: null}, "email", email);
-      res.status(200).json({message: "Password updated successfully!"});
-    } catch (error) {
-      res.status(500).json({ error: error.message});
     }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await updateRecord("users", {password: hashedPassword, resetToken: null, resetTokenExpiry: null}, "email", email);
+    res.status(200).json({message: "Password updated successfully!"});
+  } catch (error) {
+    res.status(500).json({ error: error.message});
+  }
 };
 
 //exports the controller functions
