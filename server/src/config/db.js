@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 require('dotenv').config();
-const config = require('./config');
+const config = require('server/src/config/config');
 
 // Connect to MySQL
 const connectDB = async () => {

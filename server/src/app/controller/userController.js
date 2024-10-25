@@ -3,8 +3,8 @@ const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const userSchema = require('../../schemas/userSchema');
-const {createTable, checkRecordExist, insertRecord, updateRecord} = require('../../utils/sqlFunction');
+const userSchema = require('server/src/schemas/userSchema');
+const {createTable, checkRecordExist, insertRecord, updateRecord} = require('server/src/utils/sqlFunction');
 
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
