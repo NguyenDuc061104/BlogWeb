@@ -1,7 +1,6 @@
-const siteRouter = require('server/src/router/siteRouter');
-const userRouter = require('server/src/router/userRouter');
+const siteRouter = require('./siteRouter');
+const userRouter = require('./userRouter');
 const express = require('express');
-const router = express.Router();
 
 function route(app){
     app.use('/', siteRouter);
