@@ -24,7 +24,7 @@
 /frontend/yarn-error.log*
 
 # Additional entries from WebBlog
-.env
+server/.env
 .idea
 /generated-request.http
 /External Libraries
