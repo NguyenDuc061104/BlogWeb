@@ -1,4 +1,4 @@
-
+// Creating user table
 const userSchema = `
   CREATE TABLE IF NOT EXISTS users (
       userId VARCHAR(255) UNIQUE NOT NULL,
