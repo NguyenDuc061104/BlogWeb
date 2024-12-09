@@ -1,4 +1,6 @@
 require('dotenv').config();
+console.log("PORT:", process.env.PORT);
+console.log("USER:", process.env.PORT);
 const config = {
     host: process.env.HOST,
     user: process.env.USER,

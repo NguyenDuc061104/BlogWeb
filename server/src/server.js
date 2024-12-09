@@ -12,6 +12,8 @@ const session = require('express-session');
 
 //connect to db
 connectDB();
+console.log('PASSWORD:', process.env.PASSWORD);
+console.log('DATABASE:', process.env.DATABASE);
 
 app.use(session({
     secret: process.env.SESSION_KEY,
