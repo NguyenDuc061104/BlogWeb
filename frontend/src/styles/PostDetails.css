@@ -1,0 +1,23 @@
+.post-details {
+  flex: 2;
+}
+
+.post-details label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.post-details input,
+.post-details textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.post-details textarea {
+  resize: none;
+  height: 100px;
+}

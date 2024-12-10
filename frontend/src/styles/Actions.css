@@ -1,0 +1,15 @@
+.actions button {
+  border: solid;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.show-more {
+  background: white;
+}
+
+.close {
+  background-color: black;
+  color: white;
+}
