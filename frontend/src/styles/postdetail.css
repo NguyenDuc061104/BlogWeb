@@ -1,0 +1,36 @@
+.post-detail {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.post-detail h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.post-detail .content {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.post-detail .content p {
+  margin-bottom: 15px;
+}
+
+.post-detail .content img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.post-detail .content .date {
+  font-size: 14px;
+  color: #999;
+  margin-top: 20px;
+}

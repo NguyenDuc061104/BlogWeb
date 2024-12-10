@@ -1,0 +1,54 @@
+.user-page {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .user-page h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .user-page .user-info {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .user-page .user-info p {
+    margin: 10px 0;
+  }
+  
+  .user-page .user-posts {
+    margin-top: 30px;
+  }
+  
+  .user-page .user-posts h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .user-page .user-posts ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .user-page .user-posts ul li {
+    margin-bottom: 15px;
+  }
+  
+  .user-page .user-posts ul li .title {
+    font-weight: bold;
+    font-size: 16px;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .user-page .user-posts ul li .preview {
+    font-size: 14px;
+    color: #777;
+  }
+  
