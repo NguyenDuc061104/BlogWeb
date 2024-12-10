@@ -1,0 +1,40 @@
+.post-section {
+    margin-top: 20px;
+  }
+  
+  .post-box {
+    margin-bottom: 20px;
+  }
+  
+  .post-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .post {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .post-actions button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .post-actions button:hover {
+    background-color: #f0f0f0;
+  }
+  
