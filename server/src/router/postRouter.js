@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const postController= require('../app/controller/postController');
-const authenticateToken = require('../app/middleware/authenticateToken');
+const postController = require('../app/controller/postController');
+const authenticateToken = require('../middleware/authenticateToken');
 
-router.get('/blog', authenticateToken, postController.postBlog);
+router.post('/create', authenticateToken, postController.postBlog);
+router.put('/edit', authenticateToken, postController.editBlog);
+router.delete('/delete', authenticateToken, postController.deleteBlog);
 
 module.exports = router;
