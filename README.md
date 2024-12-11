@@ -6,5 +6,5 @@ PASSWORD=
 DATABASE=
 JWT_SECRET=
 EMAIL= Your_email
-EMAIL_PASSWORD= enable 2FA, create app password
+APP_PASSWORD= enable 2FA, create app password
 SESSION_KEY=

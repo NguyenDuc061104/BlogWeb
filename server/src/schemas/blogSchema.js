@@ -5,6 +5,7 @@ const blogSchema = `
       userId VARCHAR(255) NOT NULL,
       title VARCHAR(255) NOT NULL,
       content TEXT NOT NULL,
+      reaction VARCHAR(255) DEFAULT '0',
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (blogId),
       FOREIGN KEY (userId) REFERENCES users(userId)

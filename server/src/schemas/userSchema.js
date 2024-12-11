@@ -8,6 +8,7 @@ const userSchema = `
       name VARCHAR(255) NOT NULL,
       otp VARCHAR(6),
       otpExpiry BIGINT,
+      avatar VARCHAR(255),
       Primary Key (userId),
       resetToken VARCHAR(255),
       resetTokenExpiry BIGINT

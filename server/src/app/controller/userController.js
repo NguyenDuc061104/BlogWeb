@@ -19,7 +19,7 @@ const sendOTP = async (email, otp, res) => {
     service: "gmail",
     auth: {
       user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
+      pass: process.env.APP_PASSWORD,
     },
   });
 
@@ -227,6 +227,57 @@ const changePassword = async (req, res) => {
   }
 };
 
+const updateUserName = async (req, res) => {
+  const { name } = req.body;
+  const userId = req.user.userId;
+
+  if (!name) {
+    res.status(400).json({ error: "Name field cannot be empty!" });
+    return;
+  }
+
+  try {
+    const user = await checkRecordExist("users", "userId", userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found!" });
+      return;
+    }
+
+    if (user.name === name) {
+      res.status(400).json({ error: "New name must be different from the current name!" });
+      return;
+    }
+
+    await updateRecord("users", { name }, "userId", userId);
+    res.status(200).json({ message: "Name updated successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const changeAvatar = async (req, res) => {
+  const { avatar } = req.body;
+  const userId = req.user.userId;
+
+  if (!avatar) {
+    res.status(400).json({ error: "Avatar field cannot be empty!" });
+    return;
+  }
+
+  try {
+    const user = await checkRecordExist("users", "userId", userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found!" });
+      return;
+    }
+
+    await updateRecord("users", { avatar }, "userId", userId);
+    res.status(200).json({ message: "Avatar updated successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 //exports the controller functions
 module.exports = {
   register,
@@ -234,4 +285,6 @@ module.exports = {
   forgotPassword,
   changePassword,
   verifyOTP,
+  updateUserName,
+  changeAvatar,
 };
