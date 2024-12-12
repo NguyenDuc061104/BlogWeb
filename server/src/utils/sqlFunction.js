@@ -90,4 +90,32 @@ function deleteRecord(tableName, column, value) {
     });
 }
 
-module.exports = { createTable, checkRecordExist, insertRecord, updateRecord, deleteRecord };
+function getRecords(tableName, column, value) {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT * FROM ${tableName} WHERE ${column} = ?`;
+
+        pool.query(query, [value], (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+function getRecordsByUserIds(tableName, column, userIds) {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT * FROM ${tableName} WHERE ${column} IN (?)`;
+
+        pool.query(query, [userIds], (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+module.exports = { createTable, checkRecordExist, insertRecord, updateRecord, deleteRecord, getRecords, getRecordsByUserIds };

@@ -1,5 +1,5 @@
 const { v4: uuidv4} = require('uuid');
-const { checkRecordExist, insertRecord, createTable, updateRecord, deleteRecord} = require('../../utils/sqlFunction');
+const { checkRecordExist, insertRecord, createTable, updateRecord, deleteRecord, getRecords, getRecordsByUserIds} = require('../../utils/sqlFunction');
 const blogSchema = require('../../schemas/blogSchema');
 const authenticateToken = require('../middleware/authenticateToken');
 
@@ -77,4 +77,30 @@ const deleteBlog = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-module.exports = { postBlog, editBlog, deleteBlog };
+
+const getBlogs = async (req, res) => {
+    const userId = req.user.userId;
+
+    try {
+        const friends = await getFriends(userId);
+        const friendIds = friends.map(friend => friend.friendId);
+        friendIds.push(userId); // Include the user's own blogs
+
+        const blogs = await getBlogsByUserIds(friendIds);
+        res.status(200).json(blogs);
+    } catch (e) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+const getFriends = async (userId) => {
+    // Implement a function to get friends of the user
+    return await getRecords('friendships', 'userId', userId);
+};
+
+const getBlogsByUserIds = async (userIds) => {
+    // Implement a function to get blogs by user IDs
+    return await getRecordsByUserIds('blogs', 'userId', userIds);
+};
+
+module.exports = { postBlog, editBlog, deleteBlog, getBlogs };
