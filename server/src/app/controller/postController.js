@@ -4,7 +4,7 @@ const blogSchema = require('../../schemas/blogSchema');
 const authenticateToken = require('../middleware/authenticateToken');
 
 const postBlog = async (req, res) => {
-    const { title, content, reaction } = req.body;
+    const { title, content, reaction, comment } = req.body;
     const userId = req.user.userId;
 
     if (!title || !content) {
@@ -15,13 +15,14 @@ const postBlog = async (req, res) => {
         await createTable(blogSchema);
         const blog = {
             blogId: uuidv4(),
-            userId,
             title,
             content,
+            comment,
+            userId,
             reaction
         };
-        await insertRecord('blogs', blog);
-        res.status(201).json({ message: 'Blog created successfully' });
+        const result = await insertRecord('blogs', blog);
+        res.status(201).json(result);
     } catch (e) {
         res.status(500).json({ message: 'Internal server error' });
     }

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../app/controller/postController');
-const authenticateToken = require('../middleware/authenticateToken');
+const authenticateToken = require('../app/middleware/authenticateToken');
 
 router.post('/create', authenticateToken, postController.postBlog);
 router.put('/edit', authenticateToken, postController.editBlog);
