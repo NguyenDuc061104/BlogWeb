@@ -118,4 +118,24 @@ function getRecordsByUserIds(tableName, column, userIds) {
     });
 }
 
-module.exports = { createTable, checkRecordExist, insertRecord, updateRecord, deleteRecord, getRecords, getRecordsByUserIds };
+function executeQuery(query, params) {
+    return new Promise((resolve, reject) => {
+        pool.query(query, params, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+module.exports = { createTable,
+    checkRecordExist,
+    insertRecord,
+    updateRecord,
+    deleteRecord,
+    getRecords,
+    getRecordsByUserIds,
+    executeQuery
+};
