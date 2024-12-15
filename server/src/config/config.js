@@ -1,6 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 console.log("PORT:", process.env.PORT);
-console.log("USER:", process.env.PORT);
+console.log("USER:", process.env.USER);
 const config = {
     host: process.env.HOST,
     user: process.env.USER,

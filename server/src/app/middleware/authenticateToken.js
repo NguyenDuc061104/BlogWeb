@@ -1,17 +1,28 @@
+// server/src/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const { checkRecordExist } = require('../../utils/sqlFunction');
 
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.header('Authorization');
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Access denied' });
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-    try {
-        req.user = jwt.verify(token, process.env.JWT_SECRET);
-        next();
-    } catch (error) {
-        res.status(400).json({ error: 'Invalid token' });
+  if (!token) {
+    return res.status(401).json({ message: 'Access token is required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await checkRecordExist('users', 'userId', decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid token' });
     }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid or expired token' });
+  }
 };
 
-module.exports = {authenticateToken};
+module.exports = authenticateToken;
