@@ -1,16 +1,15 @@
-// src/api/axiosClient.js
 import axios from 'axios';
 
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:5000/api', // Thay đổi baseURL phù hợp với server backend của bạn
+    baseURL: 'http://localhost:5000',
     headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
     },
+    withCredentials: true
 });
 
-// Xử lý request
+// Add a request interceptor
 axiosClient.interceptors.request.use((config) => {
-    // Thêm token vào header nếu có
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -18,11 +17,15 @@ axiosClient.interceptors.request.use((config) => {
     return config;
 });
 
-// Xử lý response
+// Add a response interceptor
 axiosClient.interceptors.response.use(
-    (response) => response.data,
+    (response) => response,
     (error) => {
-        // Xử lý lỗi
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userProfile');
+            window.location.href = '/login';
+        }
         return Promise.reject(error);
     }
 );
