@@ -18,8 +18,7 @@ const INITIAL_POSTS = [
         title: "Hôm nay trời đẹp quá!",
         content: "Đây là nội dung bài viết...",
         preview: "Đây là nội dung...",
-        time: "Vừa xong",
-        readTime: "1 phút đọc",
+        createdAt: new Date().toISOString(), // Thêm timestamp thực
         topic: "General",
         likes: 0,
         comments: 0,
@@ -35,6 +34,12 @@ export const PostProvider = ({ children }) => {
         return savedPosts ? JSON.parse(savedPosts) : INITIAL_POSTS;
     });
 
+    const updatePost = (postId, updates) => {
+        setPosts(posts.map(post => 
+            post.id === postId ? { ...post, ...updates } : post
+        ));
+    };
+
     useEffect(() => {
         localStorage.setItem('posts', JSON.stringify(posts));
     }, [posts]);
@@ -48,22 +53,26 @@ export const PostProvider = ({ children }) => {
                 reader.readAsDataURL(newPost.image);
             });
         }
-
+    
+        // Đảm bảo không ghi đè avatar từ userProfile
         const post = {
-            id: Date.now(),
             ...newPost,
+            id: Date.now(),
             image: imageUrl,
-            // Các thông tin bổ sung về người đăng
-            author: newPost.author,
-            authorId: newPost.authorId,
-            avatar: newPost.avatar
+            createdAt: new Date().toISOString(),
+            privacy: 'public'
         };
-
+        
         setPosts([post, ...posts]);
     };
 
     return (
-        <PostContext.Provider value={{ posts, setPosts, addPost }}>
+        <PostContext.Provider value={{ 
+            posts, 
+            setPosts, 
+            addPost,
+            updatePost  // Export function mới
+        }}>
             {children}
         </PostContext.Provider>
     );

@@ -1,61 +1,7 @@
-.blog-section {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.create-post img {
-  width: 32px !important; /* Thêm !important để override các styles khác */
-  height: 32px !important;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.create-post {
-  display: flex;
-  gap: 12px;
-  padding: 16px;
-  background: white;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.user-avatar,
-.author-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.post-input-trigger {
-  flex: 1;
-  padding: 8px 16px;
-  background: #f0f2f5;
-  border-radius: 20px;
-  color: #65676b;
-}
-
-.post-card img {
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.create-post:hover .post-input-trigger {
-  background: #e4e6eb;
-}
-
-.posts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.post-card {
+/* Điều chỉnh style cho article.post-card */
+article.post-card {
+  position: relative;
+  overflow: visible;
   background: white;
   border-radius: 8px;
   padding: 24px;
@@ -64,220 +10,193 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.post-header {
+/* Style cho header trong post-card */
+article.post-card .post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 16px;
+  position: relative;
+  padding-right: 32px;
 }
 
-.author-info {
+/* Style cho phần actions */
+article.post-card .post-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+article.post-card .more-options-btn {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #000;
+  font-size: 18px;
+  line-height: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-.author-details {
+article.post-card .more-options-btn:hover {
+  background-color: #f2f3f5;
+}
+
+/* Menu dropdown */
+article.post-card .post-actions-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  width: 200px;
+  z-index: 100;
+  padding: 8px 0;
+}
+
+/* Style cho các nút trong menu */
+article.post-card .post-actions-menu button {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: #050505;
+  cursor: pointer;
+  text-align: left;
+}
+
+article.post-card .post-actions-menu button:hover {
+  background-color: #f2f3f5;
 }
 
 .author-name {
-  font-weight: 500;
-  color: #292929;
+  margin-right: 8px; /* Thêm khoảng cách giữa tên và thời gian */
 }
 
 .post-meta {
-  font-size: 14px;
-  color: #757575;
-}
-
-.post-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #292929;
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.post-preview {
-  font-size: 16px;
-  color: #757575;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
-
-.post-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.post-topic {
-  font-size: 14px;
-  color: #757575;
-  padding: 4px 12px;
-  background: #f0f2f5;
-  border-radius: 16px;
-}
-
-.post-stats {
-  display: flex;
-  gap: 16px;
-  color: #757575;
-  font-size: 14px;
-}
-
-.post-stats span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-@media (max-width: 768px) {
-  .blog-section {
-    padding: 16px;
-  }
-
-  .post-card {
-    padding: 16px;
-  }
-
-  .post-title {
-    font-size: 20px;
-  }
-}
-
-.post-meta-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.post-topics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.topic-badge {
-  font-size: 13px;
-  padding: 4px 12px;
-  border-radius: 16px;
-  background-color: #f0f2f5;
-  color: #1877f2;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.topic-badge:hover {
-  background-color: #e4e6eb;
+  padding-left: 8px; /* Thêm padding cho thời gian */
+  color: #65676b;
 }
 
 .tag-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px; /* Giảm khoảng cách giữa text và nút xóa */
   font-size: 13px;
-  padding: 4px 12px;
-  border-radius: 16px;
-  background-color: #e7f3ff;
-  color: #1877f2;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tag-badge:hover {
-  background-color: #deebff;
+  padding: 4px 8px 4px 12px; /* Giảm padding bên phải */
 }
 
 .remove-tag-btn {
-  background: none;
-  border: none;
-  color: #1877f2;
-  font-size: 14px;
+  width: 16px;
+  height: 16px;
+  font-size: 12px; /* Giảm kích thước chữ x */
   padding: 0;
-  margin-left: 4px;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+  margin-left: 2px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  border-radius: 50%;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
 }
 
 .remove-tag-btn:hover {
   opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.add-tag-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  border: 1px solid #1877f2;
-  background: none;
-  color: #1877f2;
-  font-size: 16px;
+.privacy-section {
+  position: relative;
+  border-top: 1px solid #e4e6eb;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.privacy-button {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 8px 12px;
+  border: none;
+  background: none;
   cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
 }
 
-.add-tag-icon:hover {
+.privacy-info {
+  flex: 1;
+  text-align: left;
+  margin-left: 12px;
+}
+
+.privacy-label {
+  display: block;
+  font-size: 12px;
+  color: #65676b;
+}
+
+.privacy-value {
+  font-weight: 500;
+}
+
+.menu-arrow {
+  color: #65676b;
+  font-size: 18px;
+  margin-left: 8px;
+}
+
+.privacy-submenu {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  width: 250px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+}
+
+.privacy-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.privacy-option:hover {
+  background-color: #f2f3f5;
+}
+
+.privacy-option.active {
   background-color: #e7f3ff;
 }
 
-.tag-input-container {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.option-info {
+  flex: 1;
+  text-align: left;
+  margin-left: 12px;
 }
 
-.tag-input {
-  width: 100px;
-  padding: 4px 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  font-size: 13px;
-  outline: none;
-  transition: all 0.2s ease;
+.option-title {
+  display: block;
+  font-weight: 500;
 }
 
-.tag-input:focus {
-  border-color: #1877f2;
-  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.1);
-}
-
-.add-tag-button {
-  padding: 4px 8px;
-  border-radius: 12px;
-  border: none;
-  background-color: #1877f2;
-  color: white;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.add-tag-button:hover {
-  background-color: #166fe5;
-}
-
-.post-stats {
-  display: flex;
-  gap: 12px;
+.option-desc {
+  font-size: 12px;
   color: #65676b;
-  font-size: 14px;
+}
+
+.check-icon {
+  color: #1877f2;
+  margin-left: 8px;
 }

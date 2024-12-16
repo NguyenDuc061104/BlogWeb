@@ -11,18 +11,18 @@ const HomeSidebar = () => {
   const { userProfile } = useUser();
 
   const menuItems = [
-    {
-      id: 1,
-      title: "Friend",
-      icon: friends,
-      type: "menu"
-    },
-    {
-      id: 2,
-      title: "Group",
-      icon: group,
-      type: "menu"
-    },
+    // {
+    //   id: 1,
+    //   title: "Friend",
+    //   icon: friends,
+    //   type: "menu"
+    // },
+    // {
+    //   id: 2,
+    //   title: "Group",
+    //   icon: group,
+    //   type: "menu"
+    // },
     {
       id: 3,
       title: "Saved",

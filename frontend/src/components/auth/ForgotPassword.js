@@ -40,7 +40,7 @@ const ForgotPassword = () => {
             </form>
             <div className="links">
                 <Link to="/login">Back to Login</Link>
-                <Link to="/signup">Sign up</Link>
+                <Link to="/signup">Register</Link>
             </div>
         </div>
     );

@@ -51,11 +51,10 @@ const CreatePost = ({ onClose }) => {
     
     const newPost = {
       ...formData,
-      author: userProfile?.name || 'Anonymous', // Sử dụng tên từ userProfile
-      authorId: userProfile?.userId, // Thêm ID của người đăng
-      avatar: userProfile?.avatar, // Thêm avatar của người đăng
-      time: "Vừa xong",
-      readTime: `${Math.ceil(formData.content.length / 1000)} phút đọc`,
+      author: userProfile?.name || 'Anonymous',
+      authorId: userProfile?.userId,
+      avatar: userProfile?.avatar,
+      createdAt: new Date().toISOString(),
       topic,
       likes: 0,
       comments: 0,
@@ -64,7 +63,7 @@ const CreatePost = ({ onClose }) => {
     
     await addPost(newPost);
     onClose();
-  };
+};
 
   return (
     <div className="create-post-overlay">

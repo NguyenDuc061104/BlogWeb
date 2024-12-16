@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePosts } from '../../contexts/PostContext';
 import UserAvatar from '../../assets/avatars/avatar.jpg';
+import '../../styles/components/posts/PostSection.css';
+import { useUser } from '../../contexts/UserContext';
+import CreatePost from './CreatePost';
 
 const PostSection = () => {
+  const { userProfile } = useUser();
   const { topicName } = useParams();
   const navigate = useNavigate();
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null);
+  const [activeMenu, setActiveMenu] = useState(null);
   const [newTag, setNewTag] = useState('');
   const { posts, setPosts } = usePosts();
 
@@ -29,6 +34,7 @@ const PostSection = () => {
     }));
     setNewTag('');
     setEditingPostId(null);
+    setActiveMenu(null);
   };
 
   const removeTagFromPost = (postId, tagToRemove, e) => {
@@ -44,13 +50,6 @@ const PostSection = () => {
     }));
   };
 
-  const filteredPosts = topicName 
-    ? posts.filter(post => {
-        return post.topic.toLowerCase() === topicName.toLowerCase() ||
-               (post.tags && post.tags.some(tag => tag.toLowerCase() === topicName.toLowerCase()));
-      })
-    : posts;
-
   const handlePostClick = (postId) => {
     navigate(`/post/${postId}`);
   };
@@ -60,37 +59,174 @@ const PostSection = () => {
     navigate(`/topic/${tag.toLowerCase()}`);
   };
 
-  return (
-    <div className="blog-section">
-      <div className="create-post" onClick={() => setShowCreatePost(true)}>
-        <img src={UserAvatar} alt="User" className="user-avatar" />
-        <div className="post-input-trigger">Share your story!!!</div>
-      </div>
+  const handleSavePost = (postId, e) => {
+    e.stopPropagation();
+    // Implement save post logic here
+    setActiveMenu(null);
+  };
 
-      <div className="posts-list">
-        {filteredPosts.map(post => (
-          <article 
-            key={post.id} 
-            className="post-card"
-            onClick={() => handlePostClick(post.id)}
+  const handlePrivacyChange = (postId, privacy, e) => {
+    e.stopPropagation();
+    // Implement privacy change logic here
+    setActiveMenu(null);
+  };
+
+  const formatTimeAgo = (timestamp) => {
+    const now = new Date();
+    const postTime = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - postTime) / 1000);
+  
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+    }
+    if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    }
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  };
+
+  const PostActionsMenu = ({ post }) => {
+    const [showPrivacyMenu, setShowPrivacyMenu] = useState(false);
+  
+    return (
+      <div className="post-actions-menu" onClick={e => e.stopPropagation()}>
+        <button onClick={() => setEditingPostId(post.id)}>
+          <span className="menu-icon">🏷️</span>
+          Manage Tags
+        </button>
+        <button onClick={(e) => handleSavePost(post.id, e)}>
+          <span className="menu-icon">🔖</span>
+          Save Post
+        </button>
+        <div className="privacy-section">
+          <button 
+            className="privacy-button"
+            onClick={() => setShowPrivacyMenu(true)}
           >
-            <div className="post-header">
-              <div className="author-info">
-                <img src={post.avatar || UserAvatar} alt={post.author} className="author-avatar" />
-                <div className="author-details">
-                  <span className="author-name">{post.author}</span>
-                  <span className="post-meta">
-                    {post.time} · {post.readTime}
-                  </span>
+            <span className="menu-icon">
+              {post.privacy === 'public' && '🌍'}
+              {post.privacy === 'friends' && '👥'}
+              {post.privacy === 'private' && '🔒'}
+            </span>
+            <div className="privacy-info">
+              <span className="privacy-label">Who can see this post?</span>
+              <span className="privacy-value">
+                {post.privacy === 'public' && 'Public'}
+                {post.privacy === 'friends' && 'Friends'}
+                {post.privacy === 'private' && 'Only me'}
+              </span>
+            </div>
+            <span className="menu-arrow">›</span>
+          </button>
+  
+          {showPrivacyMenu && (
+            <div className="privacy-submenu">
+              <button 
+                className={`privacy-option ${post.privacy === 'public' ? 'active' : ''}`}
+                onClick={(e) => handlePrivacyChange(post.id, 'public', e)}
+              >
+                <span className="option-icon">🌍</span>
+                <div className="option-info">
+                  <span className="option-title">Public</span>
+                  <span className="option-desc">Anyone can see this post</span>
+                </div>
+                {post.privacy === 'public' && <span className="check-icon">✓</span>}
+              </button>
+              
+              <button 
+                className={`privacy-option ${post.privacy === 'friends' ? 'active' : ''}`}
+                onClick={(e) => handlePrivacyChange(post.id, 'friends', e)}
+              >
+                <span className="option-icon">👥</span>
+                <div className="option-info">
+                  <span className="option-title">Friends</span>
+                  <span className="option-desc">Only your friends can see this</span>
+                </div>
+                {post.privacy === 'friends' && <span className="check-icon">✓</span>}
+              </button>
+              
+              <button 
+                className={`privacy-option ${post.privacy === 'private' ? 'active' : ''}`}
+                onClick={(e) => handlePrivacyChange(post.id, 'private', e)}
+              >
+                <span className="option-icon">🔒</span>
+                <div className="option-info">
+                  <span className="option-title">Only me</span>
+                  <span className="option-desc">Only you can see this</span>
+                </div>
+                {post.privacy === 'private' && <span className="check-icon">✓</span>}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const filteredPosts = topicName 
+    ? posts.filter(post => {
+        return post.topic.toLowerCase() === topicName.toLowerCase() ||
+               (post.tags && post.tags.some(tag => tag.toLowerCase() === topicName.toLowerCase()));
+      })
+    : posts;
+
+    return (
+      <div className="blog-section">
+        <div className="create-post" onClick={() => setShowCreatePost(true)}>
+          <img 
+            src={userProfile?.avatar || UserAvatar} 
+            alt={userProfile?.name || "User"} 
+            className="user-avatar" 
+          />
+          <div className="post-input-trigger">Share your story!!!</div>
+        </div>
+    
+        {showCreatePost && (
+          <CreatePost onClose={() => setShowCreatePost(false)} />
+        )}
+    
+        <div className="posts-list">
+          {filteredPosts.map(post => (
+            <article 
+              key={post.id} 
+              className="post-card"
+              onClick={() => handlePostClick(post.id)}
+            >
+              <div className="post-header">
+                <div className="author-info">
+                  <img src={post.avatar || UserAvatar} alt={post.author} className="author-avatar" />
+                  <div className="author-details">
+                    <span className="author-name">{post.author}</span>
+                    <span className="post-meta">
+                      {post.createdAt ? formatTimeAgo(post.createdAt) : 'Vừa xong'}
+                    </span>
+                  </div>
+                </div>
+                <div className="post-actions">
+                  <button 
+                    className="more-options-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMenu(activeMenu === post.id ? null : post.id);
+                      setEditingPostId(null);
+                    }}
+                  >
+                    ⋮
+                  </button>
+                  {activeMenu === post.id && <PostActionsMenu post={post} />}
                 </div>
               </div>
-            </div>
 
             <div className="post-content">
               <h2 className="post-title">{post.title}</h2>
               <p className="post-preview">{post.preview}</p>
             </div>
 
+                        {/* Phần hiển thị tags trong post footer */}
             <div className="post-footer">
               <div className="post-meta-content">
                 <div className="post-topics">
@@ -115,7 +251,7 @@ const PostSection = () => {
                       </button>
                     </span>
                   ))}
-                  {editingPostId === post.id ? (
+                  {editingPostId === post.id && (
                     <div 
                       className="tag-input-container"
                       onClick={e => e.stopPropagation()}
@@ -139,16 +275,6 @@ const PostSection = () => {
                         Add
                       </button>
                     </div>
-                  ) : (
-                    <button 
-                      className="add-tag-icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingPostId(post.id);
-                      }}
-                    >
-                      +
-                    </button>
                   )}
                 </div>
                 <div className="post-stats">

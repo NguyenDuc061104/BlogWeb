@@ -12,6 +12,7 @@ body {
 
 /* Khung chính cho đăng nhập */
 .login-container {
+    margin-top: 150px !important;
     display: flex; /* Chia khung thành hai phần */
     justify-content: space-between; /* Tạo khoảng cách giữa các phần */
     align-items: stretch;
