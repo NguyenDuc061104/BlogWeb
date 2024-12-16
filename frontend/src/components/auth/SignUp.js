@@ -103,7 +103,7 @@ const SignUp = ({ setIsLoggedIn }) => {
                         value={formData.username}
                         required
                     />
-                    <button type="submit">Sign up</button>
+                    <button type="submit">Submit</button>
                 </form>
                 <p>Already have an account? <Link to="/login">Log in</Link></p>
             </div>

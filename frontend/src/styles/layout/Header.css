@@ -25,7 +25,8 @@
   width: auto;
   left: 100px;
   text-decoration: none;
-  margin-left: -50px;
+  margin-left: -60px;
+  border-radius: 50%;
 }
 
 .header-center {

@@ -82,7 +82,7 @@ const Login = ({ setIsLoggedIn }) => {
                     <Link to="/forgot-password">Forgot password?</Link>
                 </div>
 
-                <p>Don't have an account? <Link to="/signup" className='signup'>Sign up</Link></p>
+                <p>Don't have an account? <Link to="/signup" className='signup'>Register</Link></p>
             </div>
 
             <div className="login-right">

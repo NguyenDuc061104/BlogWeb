@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import defaultAvatar from '../assets/avatars/avatar.jpg';
-import Logo from '../assets/avatars/logo.jpg';
+import Logo from '../assets/avatars/logo.png';
 import '../styles/layout/Header.css';
 import Avatar from '../components/common/Avatar';
 
