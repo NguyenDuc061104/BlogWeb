@@ -5,6 +5,7 @@
 /server/node_modules
 /frontend/.pnp
 /frontend/pnp.js
+node_modules
 
 # testing
 /frontend/coverage
