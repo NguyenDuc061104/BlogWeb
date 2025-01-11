@@ -29,3 +29,7 @@ server/.env
 /generated-request.http
 /External Libraries
 /Scratches and Consoles
+
+chatbot-service/venv/
+chatbot-service/venv/Lib/site-packages/torch/lib/torch_cpu.dll
+chatbot-service/venv/Lib/site-packages/torch/lib/dnnl.lib
